@@ -6,7 +6,7 @@
 GameManager::GameManager(sf::RenderWindow* window)
     : _window(window), _paddle(nullptr), _ball(nullptr), _brickManager(nullptr), _powerupManager(nullptr),
     _messagingSystem(nullptr), _ui(nullptr), _pause(false), _time(0.f), _lives(3), _pauseHold(0.f), _levelComplete(false),
-    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f), _levelCurrentWaitTimeSeconds(0.f)
+    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f), _levelCurrentWaitTimeSeconds(0.f), _levelRandomNumberGenerator(_levelRandomNumberGeneratorSeed)
 {
     _font.loadFromFile("font/montS.ttf");
     _masterText.setFont(_font);
@@ -24,8 +24,9 @@ void GameManager::initialize()
     _powerupManager = new PowerupManager(_window, _paddle, _ball);
     _ui = new UI(_window, _lives, this);
 
-    // Create bricks
+    // Create bricks, can use a fixed generation for the first level but procedurally generate afterwards or use a set of predefined levels.
     _brickManager->createBricks(5, 10, 80.0f, 30.0f, 5.0f);
+    //_brickManager->createBricks(3 + _levelRandomNumberGenerator() % 3, 5 + +_levelRandomNumberGenerator() % 5, 80.0f, 30.0f, 5.0f);
 }
 
 void GameManager::update(float dt)
@@ -51,7 +52,8 @@ void GameManager::update(float dt)
         {
             // Create new level
             // TODO: Add variation / some procedural generation
-            _brickManager->createBricks(5, 10, 80.0f, 30.0f, 5.0f);
+            //_brickManager->createBricks(5, 10, 80.0f, 30.0f, 5.0f);
+            _brickManager->createBricks(3 + _levelRandomNumberGenerator() % 3, 7 + +_levelRandomNumberGenerator() % 3, 80.0f, 30.0f, 5.0f);
 
             _levelComplete = false;
             _masterText.setString("");

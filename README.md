@@ -42,6 +42,7 @@ Time Taken | Feature / Task
 * 33 Minutes - Mouse Controlled Paddle
 * 12 Minutes - Score, displayed on UI, incremented for each brick destroyed
 * 9 Minutes - Levels regenerate after completion with small wait time
+* 10 Minutes - Levels Procedurally Generate number of columns and rows 
 
 ---
 

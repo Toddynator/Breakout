@@ -51,6 +51,9 @@ private:
     MessagingSystem* _messagingSystem;
     UI* _ui;
 
+    std::mt19937 _levelRandomNumberGenerator; // Primarily for use with generating a level with a fixed seed so players will have the same sequence of levels, however other game events like powerups can stay random between sessions.
+    const int _levelRandomNumberGeneratorSeed = 0; // Can change this if the level generation sequence isn't suitable (e.g. first/second level is too difficult or easy).
+
     static constexpr float PAUSE_TIME_BUFFER = 0.5f;
     static constexpr float POWERUP_FREQUENCY = 7.5f;    // time between minimum powerup spawn
 };
