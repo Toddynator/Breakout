@@ -19,6 +19,7 @@ public:
     void render();
     void levelComplete();
     void powerupEffect(POWERUPS pu, float t);
+    void handleEvent(sf::Event event);
 
     Paddle* getPaddle() const;
     BrickManager* getBrickManager() const;
@@ -41,6 +42,10 @@ private:
     int _score;
     int _lives;
     bool _levelComplete;
+    bool _gameover;
+    bool _awaitingNameInput;
+    bool _backspaceKeyHeld; // Should have an inputManager which tracks for individual keys, this is a temporay solution
+    std::string _inputString;
     std::pair<POWERUPS, float> _powerupInEffect;
 
     sf::Font _font;

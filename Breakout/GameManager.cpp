@@ -7,7 +7,8 @@
 GameManager::GameManager(sf::RenderWindow* window)
     : _window(window), _paddle(nullptr), _ball(nullptr), _brickManager(nullptr), _powerupManager(nullptr),
     _messagingSystem(nullptr), _ui(nullptr), _pause(false), _time(0.f), _lives(3), _pauseHold(0.f), _levelComplete(false),
-    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f), _levelCurrentWaitTimeSeconds(0.f), _levelRandomNumberGenerator(_levelRandomNumberGeneratorSeed)
+    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f), _levelCurrentWaitTimeSeconds(0.f), _levelRandomNumberGenerator(_levelRandomNumberGeneratorSeed), 
+    _gameover(false), _awaitingNameInput(false), _inputString(""), _backspaceKeyHeld(false)
 {
     _font.loadFromFile("font/montS.ttf");
     _masterText.setFont(_font);
@@ -32,6 +33,50 @@ void GameManager::initialize()
 
 void GameManager::update(float dt)
 {
+    if (_gameover) 
+    { 
+        if (_awaitingNameInput)
+        {
+            _masterText.setString("Enter name:\n" + _inputString);
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+            {
+                _awaitingNameInput = false;
+                std::string name = _inputString;
+
+                _deserializeLeaderboard();
+
+                leaderboard.push_back({ name, _score });
+                // Sort by score, https://stackoverflow.com/questions/279854/how-do-i-sort-a-vector-of-pairs-based-on-the-second-element-of-the-pair
+                // Since we are sorting each time we add a score (which is at the end of a game) it should maintain the correct order without looping the sort multiple times.
+                std::sort(leaderboard.begin(), leaderboard.end(), [](auto& left, auto& right) {
+                    return left.second > right.second;
+                    });
+                _masterText.setString("Game over.\nYour score is: " + std::to_string(_score) + "\nHighest score achieved was by\n" + leaderboard[0].first + " with a score of\n " + std::to_string(leaderboard[0].second));
+
+                _serializeLeaderboard();
+
+                // TODO: Display leaderboard with top 5 results (or even a scrollable UI)
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace))
+            {
+                // Only remove from the input on the initial press instead of for each frame it is held.
+                if (!_backspaceKeyHeld and _inputString.size() > 0) {
+                    _inputString.pop_back();
+                }
+                _backspaceKeyHeld = true;
+            }
+            else {
+                _backspaceKeyHeld = false;
+            }
+        }
+        else
+        {
+            
+        }
+        return; 
+    }
+
     _powerupInEffect = _powerupManager->getPowerupInEffect();
     _ui->updatePowerupText(_powerupInEffect, _powerupManager->getStartTimeOfCurrentPowerup());
     _powerupInEffect.second -= dt;
@@ -39,21 +84,8 @@ void GameManager::update(float dt)
 
     if (_lives <= 0)
     {
-        _deserializeLeaderboard();
-
-        // TODO: Text Input for Name
-        leaderboard.push_back({ "Player", _score });
-        // Sort by score, https://stackoverflow.com/questions/279854/how-do-i-sort-a-vector-of-pairs-based-on-the-second-element-of-the-pair
-        // Since we are sorting each time we add a score (which is at the end of a game) it should maintain the correct order without looping the sort multiple times.
-        std::sort(leaderboard.begin(), leaderboard.end(), [](auto& left, auto& right) {
-            return left.second > right.second;
-            });
-        _masterText.setString("Game over.\nYour score is: " + std::to_string(_score) + "\nHighest score achieved was by\n" + leaderboard[0].first + " with a score of\n " + std::to_string(leaderboard[0].second));
-
-        _serializeLeaderboard();
-
-        // TODO: Display leaderboard with top 5 results (or even a scrollable UI)
-
+        _gameover = true;
+        _awaitingNameInput = true;
         return;
     }
     if (_levelComplete)
@@ -156,6 +188,20 @@ void GameManager::render()
 void GameManager::levelComplete()
 {
     _levelComplete = true;
+}
+
+void GameManager::handleEvent(sf::Event event)
+{
+    if (_awaitingNameInput)
+    {
+        if (event.type == sf::Event::TextEntered)
+        {
+            // Ignore backspace input
+            if (event.text.unicode != 8) {
+                _inputString += static_cast<char>(event.text.unicode);
+            }
+        }    
+    }
 }
 
 sf::RenderWindow* GameManager::getWindow() const { return _window; }
