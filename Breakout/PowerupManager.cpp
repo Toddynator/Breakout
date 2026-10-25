@@ -93,6 +93,9 @@ void PowerupManager::checkCollision()
         if (powerup->checkCollisionWithPaddle())
         {
             _powerupInEffect = powerup->applyEffect();
+            // We can get the start time by storing the powerup time as soon as the powerup is created, this avoids needing to store it in the powerup classes.
+            // This class can then be used to find the value for use by systems such as the UI.
+            _startTimeOfCurrentPowerup = _powerupInEffect->second;
             powerup->setAlive(false);
         }
     }
@@ -107,4 +110,9 @@ std::pair<POWERUPS, float> PowerupManager::getPowerupInEffect()
 {
     if (!_powerupInEffect) return { none, 0.f };
     return *_powerupInEffect;
+}
+
+float PowerupManager::getStartTimeOfCurrentPowerup()
+{
+    return _startTimeOfCurrentPowerup;
 }

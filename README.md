@@ -35,6 +35,9 @@ _TO DO_
 
 <Add information to this section about the time you've taken for this task along with a professional changelist.>
 
+Time Taken | Feature / Task
+* 40 Minutes - UI Powerup Progress Bar
+
 ---
 
 ### Change log

@@ -26,6 +26,7 @@ public:
     void checkCollision(); // Check collision with paddle
     int getPowerupsSpawned();
     std::pair<POWERUPS, float> getPowerupInEffect();
+    float getStartTimeOfCurrentPowerup();
 
 private:
     sf::RenderWindow* _window;
@@ -34,4 +35,5 @@ private:
     std::vector<PowerupBase*> _powerups;            // used to manage deletion.
     std::optional<std::pair<POWERUPS, float>> _powerupInEffect;    // used for gameManager to get reference.
     std::mt19937 _rng; // mersenne twister
+    float _startTimeOfCurrentPowerup = 0.f;
 };
