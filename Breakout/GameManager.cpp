@@ -80,6 +80,23 @@ void GameManager::update(float dt)
     // move paddle
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) _paddle->moveRight(dt);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) _paddle->moveLeft(dt);
+    // Mouse Input, only move paddle towards mouse when holding LMB so that keyboard A & D controls are still useable.
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        sf::Vector2i mouseDesktopPosition = sf::Mouse::getPosition();
+        sf::Vector2i mouseScreenPosition;
+        // Since I can't seem to access WindowBase from RenderWindow to then get a position in window coords, I have to constract the mouse screen position myself from its desktop position and window position + size.
+        mouseScreenPosition = sf::Vector2i{ mouseDesktopPosition.x - _window->getPosition().x, mouseDesktopPosition.y - _window->getPosition().y};
+
+        /*std::cout << "\nMouseDesktopX: " << mouseDesktopPosition.x
+            << " MouseScreenPosX: " << mouseScreenPosition.x;*/
+           
+        if (_paddle->getSpritePosition().x + (_paddle->getSpriteSize().x * 0.5f) > mouseScreenPosition.x) {
+            _paddle->moveLeft(dt, mouseScreenPosition.x - (_paddle->getSpriteSize().x * 0.5f));
+        }
+        else if (_paddle->getSpritePosition().x + (_paddle->getSpriteSize().x * 0.5f) < mouseScreenPosition.x) {
+            _paddle->moveRight(dt, mouseScreenPosition.x);
+        }
+    }
 
     // update everything 
     _paddle->update(dt);

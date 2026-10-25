@@ -7,6 +7,8 @@ W Kavanagh & N Merchant. Summer 2024 (last maintained, Oct 26)
 A/D to move the paddle right and left.
 P to pause.
 
+Hold Left Mouse Button to move paddle towards cursor screen position
+
 ## Powerups
 
 big/small paddle (blue)
@@ -37,6 +39,7 @@ _TO DO_
 
 Time Taken | Feature / Task
 * 40 Minutes - UI Powerup Progress Bar
+* 33 Minutes - Mouse Controlled Paddle
 
 ---
 

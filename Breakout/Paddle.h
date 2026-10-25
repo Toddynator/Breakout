@@ -10,11 +10,15 @@ public:
     ~Paddle();
 
     void moveLeft(float dt);
+    void moveLeft(float dt, float targetXPosition);
     void moveRight(float dt);
+    void moveRight(float dt, float targetXPosition);
     void update(float dt);
     void render();
     sf::FloatRect getBounds() const;
     void setWidth(float coeff, float duration);
+    const sf::Vector2i getSpritePosition();
+    const sf::Vector2f getSpriteSize();
 
 private:
 
