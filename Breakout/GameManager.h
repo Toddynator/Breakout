@@ -25,6 +25,8 @@ public:
     PowerupManager* getPowerupManager() const;
     sf::RenderWindow* getWindow() const;
     UI* getUI() const;
+    void incrementScore(int scoreToAdd);
+    int getScore();
 
 
 private:
@@ -32,6 +34,7 @@ private:
     float _pauseHold;
     float _time;
     float _timeLastPowerupSpawned;
+    int _score;
     int _lives;
     bool _levelComplete;
     std::pair<POWERUPS, float> _powerupInEffect;

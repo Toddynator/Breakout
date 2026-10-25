@@ -40,6 +40,7 @@ _TO DO_
 Time Taken | Feature / Task
 * 40 Minutes - UI Powerup Progress Bar
 * 33 Minutes - Mouse Controlled Paddle
+* 12 Minutes - Score, displayed on UI, incremented for each brick destroyed
 
 ---
 

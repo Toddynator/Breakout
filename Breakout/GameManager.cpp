@@ -102,6 +102,7 @@ void GameManager::update(float dt)
     _paddle->update(dt);
     _ball->update(dt);
     _powerupManager->update(dt);
+    _ui->updateScoreText(); // Update only after collisions have been computed
 }
 
 void GameManager::loseLife()
@@ -129,6 +130,14 @@ void GameManager::levelComplete()
 
 sf::RenderWindow* GameManager::getWindow() const { return _window; }
 UI* GameManager::getUI() const { return _ui; }
+void GameManager::incrementScore(int scoreToAdd)
+{
+    _score += scoreToAdd;
+}
+int GameManager::getScore()
+{
+    return _score;
+}
 Paddle* GameManager::getPaddle() const { return _paddle; }
 BrickManager* GameManager::getBrickManager() const { return _brickManager; }
 PowerupManager* GameManager::getPowerupManager() const { return _powerupManager; }

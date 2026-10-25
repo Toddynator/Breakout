@@ -50,6 +50,10 @@ int BrickManager::checkCollision(sf::CircleShape& ball, sf::Vector2f& direction)
         // In a complete implementation, you would set an _isDestroyed flag or remove it from the vector
         brick = _bricks.back();
         _bricks.pop_back();
+
+        // Increase score for each brick destroyed, might want global constants or settngs in GameManager for the score that should be given for each brick destroyed.
+        _gameManager->incrementScore(1);
+
         break;
     }
     if (_bricks.size() == 0)

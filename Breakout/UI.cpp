@@ -34,6 +34,13 @@ UI::UI(sf::RenderWindow* window, int lives, GameManager* gameManager)
 	_progressBar.setSize(sf::Vector2f(progressBarWidth, progressBarHeight));
 	_progressBarBackground.setFillColor(sf::Color::Blue);
 	_progressBar.setFillColor(sf::Color::Red);
+
+	_scoreText.setCharacterSize(30);
+	_scoreText.setPosition(300, 10);
+	_scoreText.setFillColor(sf::Color::Cyan);
+	_font.loadFromFile("font/montS.ttf");
+	_scoreText.setFont(_font);
+	_scoreText.setString("Score: 0");
 }
 
 UI::~UI()
@@ -86,6 +93,11 @@ void UI::updatePowerupText(std::pair<POWERUPS, float> powerup, float startTimeOf
 	_updatePowerupProgressBar(powerup.second, startTimeOfPowerup);
 }
 
+void UI::updateScoreText()
+{
+	_scoreText.setString("Score: " + std::to_string(_gameManager->getScore()));
+}
+
 // Update progress bar using normalised value of the powerups cooldown to size it from 0 width to filling the full bar 
 void UI::_updatePowerupProgressBar(float powerupTimeLeft, float startTimeOfPowerup)
 {
@@ -106,6 +118,7 @@ void UI::lifeLost(int lives)
 void UI::render()
 {
 	_window->draw(_powerupText);
+	_window->draw(_scoreText);
 	for (sf::CircleShape life : _lives)
 	{
 		_window->draw(life);
