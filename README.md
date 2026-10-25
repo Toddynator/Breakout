@@ -43,6 +43,7 @@ Time Taken | Feature / Task
 * 12 Minutes - Score, displayed on UI, incremented for each brick destroyed
 * 9 Minutes - Levels regenerate after completion with small wait time
 * 10 Minutes - Levels Procedurally Generate number of columns and rows 
+* 50 Minutes - Binary Serialized Leaderboard, score saves to file and highest score achieved by a player is displayed (Name Input TODO)
 
 ---
 

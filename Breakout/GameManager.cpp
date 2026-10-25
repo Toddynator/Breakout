@@ -2,6 +2,7 @@
 #include "Ball.h"
 #include "PowerupManager.h"
 #include <iostream>
+#include <fstream>
 
 GameManager::GameManager(sf::RenderWindow* window)
     : _window(window), _paddle(nullptr), _ball(nullptr), _brickManager(nullptr), _powerupManager(nullptr),
@@ -38,7 +39,21 @@ void GameManager::update(float dt)
 
     if (_lives <= 0)
     {
-        _masterText.setString("Game over.");
+        _deserializeLeaderboard();
+
+        // TODO: Text Input for Name
+        leaderboard.push_back({ "Player", _score });
+        // Sort by score, https://stackoverflow.com/questions/279854/how-do-i-sort-a-vector-of-pairs-based-on-the-second-element-of-the-pair
+        // Since we are sorting each time we add a score (which is at the end of a game) it should maintain the correct order without looping the sort multiple times.
+        std::sort(leaderboard.begin(), leaderboard.end(), [](auto& left, auto& right) {
+            return left.second > right.second;
+            });
+        _masterText.setString("Game over.\nYour score is: " + std::to_string(_score) + "\nHighest score achieved was by\n" + leaderboard[0].first + " with a score of\n " + std::to_string(leaderboard[0].second));
+
+        _serializeLeaderboard();
+
+        // TODO: Display leaderboard with top 5 results (or even a scrollable UI)
+
         return;
     }
     if (_levelComplete)
@@ -152,6 +167,73 @@ void GameManager::incrementScore(int scoreToAdd)
 int GameManager::getScore()
 {
     return _score;
+}
+void GameManager::_serializeLeaderboard()
+{
+    /// OPEN  FILE
+
+    std::string fileName = "leaderboard.bin";
+    std::ofstream file(fileName, std::ios::binary);
+    if (!file.is_open()) {
+        std::cout << "\nFailed to open file for writing";
+        return;
+    }
+
+    /// SERIALIZE LEADERBOARD    
+
+    // Write Vector Size
+    size_t vectorSize = leaderboard.size();
+    file.write(reinterpret_cast<const char*>(&vectorSize), sizeof(vectorSize));
+    for (auto [name, score] : leaderboard)
+    {
+        // Write Name
+        size_t nameSize = name.size();
+        file.write(reinterpret_cast<const char*>(&nameSize), sizeof(nameSize));
+        file.write(name.c_str(), nameSize);
+        // Write Score
+        file.write(reinterpret_cast<const char*>(&score), sizeof(score));
+    }
+
+    /// CLOSE FILE
+
+    file.close();
+}
+void GameManager::_deserializeLeaderboard()
+{
+    /// OPEN FILE
+
+    std::string fileName = "leaderboard.bin";
+    std::ifstream file(fileName, std::ios::binary);
+    if (!file.is_open()) {
+        std::cout << "\nFailed to open file for reading";
+        return;
+    }
+
+    /// DESERIALIZE LEADERBOARD
+    // Deserialization must match order of serialization
+
+    leaderboard.clear();
+    // Read and set vector size
+    size_t vectorSize;
+    file.read(reinterpret_cast<char*>(&vectorSize), sizeof(vectorSize));
+    leaderboard.reserve(vectorSize);
+    for (int i = 0; i < vectorSize; i++)
+    {
+        // Write Name
+        std::string name;
+        size_t nameSize;
+        file.read(reinterpret_cast<char*>(&nameSize), sizeof(nameSize));  
+        name.resize(nameSize);
+        file.read(&name[0], nameSize);
+        // Write Score
+        int score;
+        file.read(reinterpret_cast<char*>(&score), sizeof(score));
+        leaderboard.push_back({ name, score });
+    }
+
+    /// CLOSE FILE
+
+    file.close();
 }
 Paddle* GameManager::getPaddle() const { return _paddle; }
 BrickManager* GameManager::getBrickManager() const { return _brickManager; }
