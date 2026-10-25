@@ -34,6 +34,7 @@ private:
     float _pauseHold;
     float _time;
     float _timeLastPowerupSpawned;
+    float _levelCurrentWaitTimeSeconds;
     int _score;
     int _lives;
     bool _levelComplete;

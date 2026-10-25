@@ -6,7 +6,7 @@
 GameManager::GameManager(sf::RenderWindow* window)
     : _window(window), _paddle(nullptr), _ball(nullptr), _brickManager(nullptr), _powerupManager(nullptr),
     _messagingSystem(nullptr), _ui(nullptr), _pause(false), _time(0.f), _lives(3), _pauseHold(0.f), _levelComplete(false),
-    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f)
+    _powerupInEffect({ none,0.f }), _timeLastPowerupSpawned(0.f), _levelCurrentWaitTimeSeconds(0.f)
 {
     _font.loadFromFile("font/montS.ttf");
     _masterText.setFont(_font);
@@ -43,6 +43,19 @@ void GameManager::update(float dt)
     if (_levelComplete)
     {
         _masterText.setString("Level completed.");
+
+        _levelCurrentWaitTimeSeconds += dt;
+        // Wait for a small amount of time between levels as a small break for the player
+        const float levelWaitTimeSeconds = 3.0f;
+        if (_levelCurrentWaitTimeSeconds > levelWaitTimeSeconds)
+        {
+            // Create new level
+            // TODO: Add variation / some procedural generation
+            _brickManager->createBricks(5, 10, 80.0f, 30.0f, 5.0f);
+
+            _levelComplete = false;
+            _masterText.setString("");
+        }
         return;
     }
     // pause and pause handling
